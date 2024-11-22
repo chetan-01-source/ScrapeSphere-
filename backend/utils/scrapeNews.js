@@ -40,7 +40,8 @@ const websites = [
   },
 ];
 
-const scrapeNews = async () => {
+// Scraping and broadcasting new articles to WebSocket clients
+const scrapeNews = async (broadcastNewArticles) => {
   console.log('Starting web scraping...');
 
   for (const site of websites) {
@@ -107,6 +108,9 @@ const scrapeNews = async () => {
             );
           }
         }
+
+        // After inserting articles, broadcast them to WebSocket clients
+        broadcastNewArticles(articles); // Pass the articles to WebSocket for broadcasting
       }
     } catch (error) {
       console.error(`Failed to scrape ${name}: ${error.message}`);
