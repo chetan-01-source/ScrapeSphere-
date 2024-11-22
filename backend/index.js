@@ -5,7 +5,7 @@ const cron = require('node-cron');
 const mongoose = require("mongoose");
 const newsRoutes = require('./routes/newsRoutes');
 const scrapeNews = require('./utils/scrapeNews');
-
+let count=1;
 const MONGO_URI = process.env.MONGO_URI;
 
 // Middleware to parse JSON
@@ -19,11 +19,19 @@ mongoose
 
     // Call scrapeNews after MongoDB connection
     try {
-      console.log("Starting news scraping...");
-      cron.schedule('0 0 * * *', async () => {
-        console.log('Running scheduled scraper');
-        await scrapeNews(); // Call the scraper function
-    });
+      if(count==1){
+        console.log("Starting news scraping...");
+        await scrapeNews();
+      }
+      else{
+        cron.schedule('0 0 * * *', async () => {
+          console.log('Running scheduled scraper');
+          await scrapeNews(); // Call the scraper function
+      });
+        
+      }
+      
+      
       console.log("News scraping completed.");
     } catch (error) {
       console.error("Error during news scraping:", error.message);
