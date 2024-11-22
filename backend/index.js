@@ -23,13 +23,12 @@ mongoose
         console.log("Starting news scraping...");
         await scrapeNews();
       }
-      else{
+   
         cron.schedule('0 0 * * *', async () => {
           console.log('Running scheduled scraper');
           await scrapeNews(); // Call the scraper function
       });
         
-      }
       
       
       console.log("News scraping completed.");
