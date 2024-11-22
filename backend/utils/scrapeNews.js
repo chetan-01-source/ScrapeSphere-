@@ -1,6 +1,10 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const Sentiment = require('sentiment');
 const News = require('../models/News');
+
+// Initialize sentiment analysis library
+const sentimentAnalyzer = new Sentiment();
 
 // List of websites with specific selectors
 const websites = [
@@ -34,7 +38,6 @@ const websites = [
       url: 'a', // Link to the article
     },
   },
-  
 ];
 
 const scrapeNews = async () => {
@@ -54,8 +57,8 @@ const scrapeNews = async () => {
       $(selectors.container).each((i, el) => {
         const title = $(el).find(selectors.title).text().trim();
         let description = $(el).find(selectors.description).text().trim();
-        if(description==''){
-          description =title;
+        if (description === '') {
+          description = title;
         }
         const link = $(el).find(selectors.url).attr('href');
 
@@ -63,9 +66,27 @@ const scrapeNews = async () => {
         const formattedLink = link && link.startsWith('/')
           ? new URL(link, url).href
           : link;
-          console.log({ title, description, link });
+
         if (title && description && formattedLink) {
-          articles.push({ title, description, url: formattedLink, source: name });
+          // Perform sentiment analysis on the article's title and description
+          const sentimentResult = sentimentAnalyzer.analyze(`${title} ${description}`);
+          const sentimentScore = sentimentResult.score; // Overall sentiment score
+          const sentimentCategory = sentimentScore > 0
+            ? 'positive'
+            : sentimentScore < 0
+            ? 'negative'
+            : 'neutral';
+
+          articles.push({
+            title,
+            description,
+            url: formattedLink,
+            source: name,
+            sentiment: {
+              score: sentimentScore,
+              category: sentimentCategory,
+            },
+          });
         }
       });
 

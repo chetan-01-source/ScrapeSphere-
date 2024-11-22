@@ -5,7 +5,11 @@ const newsSchema = new mongoose.Schema({
   description: { type: String },
   url: { type: String, required: true,unique: true  },
   publishedAt: { type: Date },
-  source: { type: String }
+  source: { type: String },
+  sentiment: {
+    score: Number,
+    category: String,
+  },
 });
 newsSchema.index({ title: "text", description: "text" }); 
 
