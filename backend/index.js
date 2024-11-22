@@ -7,6 +7,17 @@ const newsRoutes = require('./routes/newsRoutes');
 const scrapeNews = require('./utils/scrapeNews');
 let count=1;
 const MONGO_URI = process.env.MONGO_URI;
+const authRoutes = require("./routes/authRoutes");
+const emailUsers = require('./utils/emailUsers');
+
+// Schedule email notifications at midnight daily
+cron.schedule('0 0 * * *', async () => {
+  console.log("Sending daily email updates...");
+  await emailUsers();
+});
+
+
+
 
 // Middleware to parse JSON
 app.use(express.json());
@@ -28,6 +39,7 @@ mongoose
           console.log('Running scheduled scraper');
           await scrapeNews(); // Call the scraper function
       });
+
         
       
       
@@ -37,6 +49,8 @@ mongoose
     }
   })
   .catch((err) => console.error("MongoDB connection error:", err));
+  
+app.use("/api/auth", authRoutes);
 
 // Default route
 app.get("/", (req, res) => {
