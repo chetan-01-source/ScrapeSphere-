@@ -48,7 +48,7 @@ mongoose
       }
 
       // Set up cron job to scrape news every 10 minutes
-      cron.schedule('*/10 * * * *', async () => {
+      cron.schedule('*/1 * * * *', async () => {
         console.log('Running scheduled scraper every 10 minutes');
         await updatedScrapeNews(); // Call the scraper function
       });
@@ -61,7 +61,7 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Schedule email notifications at midnight daily
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('*/45 * * * *', async () => {
   console.log("Sending daily email updates...");
   await emailUsers();
 });
